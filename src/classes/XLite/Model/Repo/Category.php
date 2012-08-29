@@ -71,6 +71,16 @@ class Category extends \XLite\Model\Repo\Base\I18n
     }
 
     /**
+     * Return the category membership condition
+     *
+     * @return boolean
+     */
+    public function getMembershipCondition()
+    {
+        return !\XLite::isAdminZone();
+    }
+
+    /**
      * Create a new QueryBuilder instance that is prepopulated for this entity name
      *
      * @param string  $alias       Table alias OPTIONAL
@@ -85,6 +95,7 @@ class Category extends \XLite\Model\Repo\Base\I18n
 
         $this->addEnabledCondition($queryBuilder, $alias);
         $this->addOrderByCondition($queryBuilder, $alias);
+        $this->addMembershipCondition($queryBuilder, $alias);
 
         if ($excludeRoot) {
             $this->addExcludeRootCondition($queryBuilder, $alias);
@@ -126,7 +137,9 @@ class Category extends \XLite\Model\Repo\Base\I18n
      */
     public function getCategoriesPlainList($rootId = null)
     {
-        return $this->defineFullTreeQuery($rootId)->getArrayResult();
+        $rootId = $rootId ?: $this->getRootCategoryId();
+
+        return $this->getCategoriesPlainListChild($rootId);
     }
 
     /**
@@ -265,9 +278,31 @@ class Category extends \XLite\Model\Repo\Base\I18n
     {
         $queryBuilder = $this->createQueryBuilder()
             ->addSelect('translations');
+
         $this->addSubTreeCondition($queryBuilder, $categoryId ?: $this->getRootCategoryId());
 
         return $queryBuilder;
+    }
+
+    /**
+     * Get categories plain list (child)
+     *
+     * @param integer $categoryId Category id
+     *
+     * @return array
+     */
+    protected function getCategoriesPlainListChild($categoryId)
+    {
+        $list = array();
+
+        foreach ($this->defineSubcategoriesQuery($categoryId)->getArrayResult() as $category) {
+            $list[] = $category;
+            if ($category['lpos'] > $category['rpod'] + 1) {
+                $list = array_merge($list, $this->getCategoriesPlainListChild($category['category_id']));
+            }
+        }
+
+        return $list;
     }
 
     /**
@@ -430,6 +465,33 @@ class Category extends \XLite\Model\Repo\Base\I18n
             $queryBuilder
                 ->andWhere(($alias ?: $this->getDefaultAlias()) . '.enabled = :enabled')
                 ->setParameter('enabled', true);
+        }
+    }
+
+    /**
+     * Adds additional condition to the query for checking if category is enabled
+     *
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder Query builder object
+     * @param string                     $alias        Entity alias OPTIONAL
+     *
+     * @return void
+     */
+    protected function addMembershipCondition(\Doctrine\ORM\QueryBuilder $queryBuilder, $alias = null)
+    {
+        $alias = $alias ?: $this->getDefaultAlias();
+
+        if ($this->getMembershipCondition()) {
+
+            $membership = \XLite\Core\Auth::getInstance()->getMembershipId();
+
+            if ($membership) {
+                $queryBuilder
+                    ->andWhere($alias . '.membership = :membershipId OR ' . $alias . '.membership IS NULL')
+                    ->setParameter('membershipId', \XLite\Core\Auth::getInstance()->getMembershipId());
+            } else {
+                $queryBuilder
+                    ->andWhere($alias . '.membership IS NULL');
+            }
         }
     }
 
