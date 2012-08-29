@@ -420,8 +420,8 @@ class XPaymentsClient extends \XLite\Base\Singleton
         if (substr($body, 0, 3) !== 'API') {
     
             $this->getApiError(
-                'Response is not valid.\nResponse headers: ' 
-                . var_export($headers, true) . '\nResponse: ' . $body . '\n'
+                "Response is not valid.\nResponse headers: " 
+                . var_export($headers, true) . "\nResponse: " . $body . "\n"
             );
     
             return array(false, 'Response is not valid.<br />Check logs.');
