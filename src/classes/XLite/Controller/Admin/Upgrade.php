@@ -303,8 +303,8 @@ class Upgrade extends \XLite\Controller\Admin\AAdmin
                 $this->showError(__FUNCTION__, 'not all archives were unpacked');
 
                 \XLite\Core\TopMessage::addError(
-                    'Try to unpack them manually, and click <a href="' 
-                    . $this->buildURL('upgrade', 'check_integrity') 
+                    'Try to unpack them manually, and click <a href="'
+                    . $this->buildURL('upgrade', 'check_integrity')
                     . '">this link</a>'
                 );
 
@@ -359,10 +359,15 @@ class Upgrade extends \XLite\Controller\Admin\AAdmin
             // Perform upgrade
             $this->runStep('upgrade', array(false, $this->getFilesToOverWrite()));
 
+            $modules = array();
+
             // Disable selected modules
             foreach (\XLite\Upgrade\Cell::getInstance()->getIncompatibleModules(true) as $module) {
-                \Includes\Utils\ModulesManager::disableModule($module->getActualName());
+                $module->setEnabled(false);
+                $modules[] = $module;
             }
+
+            \XLite\Core\Database::getRepo('\XLite\Model\Module')->updateInBatch($modules);
 
             if ($this->isForce()) {
                 if ($this->isNextStepAvailable()) {
@@ -432,6 +437,7 @@ class Upgrade extends \XLite\Controller\Admin\AAdmin
         if ($version) {
             \XLite\Upgrade\Cell::getInstance()->setCoreVersion($version);
             \XLite\Upgrade\Cell::getInstance()->clear(false);
+            $this->setHardRedirect();
 
         } else {
             \XLite\Core\TopMessage::addError('Unexpected error: version value is not passed');

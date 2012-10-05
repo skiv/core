@@ -261,6 +261,15 @@ class Module extends \XLite\Model\AEntity
      */
     protected $marketplaceID;
 
+    /**
+     * Flag (true if module is 'system module')
+     *
+     * @var boolean
+     *
+     * @Column (type="boolean")
+     */
+    protected $isSystem = false;
+
 
     // {{{ Routines to access methods of (non)installed modules
 
@@ -519,7 +528,35 @@ class Module extends \XLite\Model\AEntity
                     ? array()
                     : \Includes\Utils\ModulesManager::getModuleProtectedStructures($this->getAuthor(), $this->getName())
             );
+
+            $this->switchLinkedModels($this->getEnabled());
         }
+    }
+
+    /**
+     * Switch linked models 
+     * 
+     * @param boolean $enabled Module enabled status
+     *  
+     * @return void
+     */
+    protected function switchLinkedModels($enabled)
+    {
+        foreach ($this->getLinkedModelDefinition() as $repo) {
+            \XLite\Core\Database::getRepo($repo)->switchModuleLink($enabled, $this);
+        }
+    }
+
+    /**
+     * Get linked model definition 
+     * 
+     * @return array
+     */
+    protected function getLinkedModelDefinition()
+    {
+        return array(
+            'XLite\Model\Payment\Method',
+        );
     }
 
     // }}}

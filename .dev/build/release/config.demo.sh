@@ -29,6 +29,7 @@ CDev/AuthorizeNet
 CDev/Moneybookers
 CDev/Quantum
 CDev/PaypalWPS
+CDev/Paypal
 CDev/USPS
 "
 
@@ -63,4 +64,8 @@ DRUPAL_FILES_TODELETE=""
 LC_SEO_PHRASES=""
 
 DRUPAL_SEO_PHRASES=""
+
+REPLACE_HEADERS_SETTINGS=""
+
+CHECK_HEADERS_SETTINGS=""
 

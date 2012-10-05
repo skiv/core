@@ -41,6 +41,12 @@ namespace XLite\Model;
 class Category extends \XLite\Model\Base\Catalog
 {
     /**
+     * WEB LC root postprocessing constant
+     */
+    const WEB_LC_ROOT = '{{WEB_LC_ROOT}}';
+
+
+    /**
      * Node unique ID
      *
      * @var integer
@@ -149,7 +155,7 @@ class Category extends \XLite\Model\Base\Catalog
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
      * @OneToMany (targetEntity="XLite\Model\Category", mappedBy="parent", cascade={"all"})
-     * @OrderBy({"pos" = "ASC"})
+     * @OrderBy({"pos" = "ASC","lpos" = "ASC"})
      */
     protected $children;
 
@@ -337,6 +343,26 @@ class Category extends \XLite\Model\Base\Catalog
     }
 
     /**
+     * Get membership Id
+     *
+     * @return integer
+     */
+    public function getMembershipId()
+    {
+        return $this->getMembership() ? $this->getMembership()->getMembershipId() : null;
+    }
+
+    /**
+     * Flag if the category and active profile have the same memberships. (when category is displayed or hidden)
+     *
+     * @return boolean
+     */
+    public function hasAvailableMembership()
+    {
+        return is_null($this->getMembershipId()) || $this->getMembershipId() == \XLite\Core\Auth::getInstance()->getMembershipId();
+    }
+
+    /**
      * Return number of products associated with the category
      *
      * TODO: check if result of "getProducts()" is cached by Doctrine
@@ -369,6 +395,20 @@ class Category extends \XLite\Model\Base\Catalog
     }
 
     /**
+     * Return category description
+     *
+     * @return string
+     */
+    public function getViewDescription()
+    {
+        return str_replace(
+            $this->getWebPreprocessingTags(),
+            $this->getWebPreprocessingURL(),
+            $this->getDescription()
+        );
+    }
+
+    /**
      * Constructor
      *
      * @param array $data Entity properties OPTIONAL
@@ -381,5 +421,35 @@ class Category extends \XLite\Model\Base\Catalog
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
 
         parent::__construct($data);
+    }
+
+    /**
+     * Register tags to be replaced with some URLs
+     *
+     * @return array
+     */
+    protected function getWebPreprocessingTags()
+    {
+        return array(
+            static::WEB_LC_ROOT,
+        );
+    }
+
+    /**
+     * Register URLs that should be given instead of tags
+     *
+     * @return array
+     */
+    protected function getWebPreprocessingURL()
+    {
+        // Get URL of shop. If the HTTPS is used then it should be cleaned from ?xid=<xid> construction
+        $url = \XLite::getInstance()->getShopURL(null, \XLite\Core\Request::getInstance()->isHTTPS());
+
+        // We are cleaning URL from unnecessary here <xid> construction
+        $url = preg_replace('/(\?.*)/', '', $url);
+
+        return array(
+            $url,
+        );
     }
 }

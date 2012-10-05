@@ -872,6 +872,10 @@ class FlexyCompiler extends \XLite\Base\Singleton
             $expr = $this->flexyCondition(substr($str, 4));
             return static::PHP_OPEN . " if ($expr){" . static::PHP_CLOSE;
         }
+        if (substr($str, 0, 8) == '{elseif:') {
+            $expr = $this->flexyCondition(substr($str, 8));
+            return static::PHP_OPEN . " }elseif ($expr){" . static::PHP_CLOSE;
+        }
         if ($str == '{end:}') {
             return static::PHP_OPEN . " }" . static::PHP_CLOSE;
         }
@@ -1238,7 +1242,7 @@ class FlexyCompiler extends \XLite\Base\Singleton
     {
         $compiled = LC_DIR_COMPILE . substr($original, $this->rootDirLength) . '.php';
 
-        if (($this->checkTemplateStatus && !$this->isTemplateValid($original, $compiled)) || $force) {
+        if (!$this->isTemplateValid($original, $compiled) || $force) {
             \Includes\Utils\FileManager::write($compiled, $this->parse($original));
 
             touch($compiled, filemtime($original));
@@ -1257,7 +1261,8 @@ class FlexyCompiler extends \XLite\Base\Singleton
      */
     protected function isTemplateValid($original, $compiled)
     {
-        return \Includes\Utils\FileManager::isExists($compiled) && (filemtime($compiled) == filemtime($original));
+        return \Includes\Utils\FileManager::isExists($compiled)
+            && (!$this->checkTemplateStatus || (filemtime($compiled) == filemtime($original)));
     }
 
     /**

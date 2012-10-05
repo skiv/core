@@ -146,7 +146,15 @@ CheckoutView.prototype.postprocess = function(isSuccess, initial)
       .eq(0)
       .commonController(
         'enableBackgroundSubmit',
-        null,
+        function () {
+          var f = this;
+          setTimeout(
+            function() {
+              jQuery(':input', f).attr('readonly', 'readonly');
+            },
+            100
+          );
+        },
         function(event) {
           if (jQuery('#account-links a.log-in').length) {
             jQuery('.error a.log-in', this)
@@ -160,6 +168,8 @@ CheckoutView.prototype.postprocess = function(isSuccess, initial)
               );
           }
 
+          jQuery(':input', this).removeAttr('readonly');
+
           return o.resetAfterSubmit(event);
         }
       )
@@ -169,6 +179,13 @@ CheckoutView.prototype.postprocess = function(isSuccess, initial)
 
     jQuery('.profile .create #create_profile_chk', this.commonBase).change(
       function() {
+        if (this.checked) {
+          jQuery(this).parent().find('p').show();
+
+        } else {
+          jQuery(this).parent().find('p').hide();
+        }
+
         if (this.form.validate(true)) {
           this.form.commonController.submitForce();
         }
@@ -346,14 +363,6 @@ CheckoutView.prototype.postprocess = function(isSuccess, initial)
           jQuery(this).parents('.items-row').find('.modified-subtotal'),
           jQuery(this).html()
         );
-      }
-    );
-
-    jQuery('form.place .terms a', this.base).click(
-      function(event) {
-        event.stopPropagation();
-        self.location = jQuery(this).attr('href');
-        return false;
       }
     );
 
@@ -594,6 +603,7 @@ CheckoutView.prototype.refreshState = function()
 
         } else if (!jQuery('#create_profile_email', form).get(0).validate(true) || !jQuery('#create_profile_email', form).val()) {
           jQuery('.shipping-step .email-not-defined', this.base).show();
+          jQuery('.shipping-step .email-not-defined', this.base).addClass('red');
         }
 
       } else {
@@ -718,6 +728,7 @@ ShippingMethodsView.prototype.postprocess = function(isSuccess, initial)
         'afterSubmit',
         function() {
           jQuery('.shipping-step.current .button-row button', o.parentWidget.base).removeClass('disabled');
+          o.parentWidget.refreshState();
         }
       )
       .find('ul.shipping-rates input')
@@ -732,7 +743,7 @@ ShippingMethodsView.prototype.postprocess = function(isSuccess, initial)
       var box = jQuery('form.shipping-address ul.form', this.parentWidget.base).get(0);
       if (box && box.loadable.isLoading) {
 
-        // Deffer refresh parent widget state if shippoing address form is loading
+        // Defer refresh parent widget state if shipping address form is loading
         // Otherwise, refresh state mechanism will has obsolete data
         box.loadable.postloadHandler = function() {
           o.parentWidget.refreshState();

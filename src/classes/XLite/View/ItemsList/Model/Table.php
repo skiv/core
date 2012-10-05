@@ -43,6 +43,7 @@ abstract class Table extends \XLite\View\ItemsList\Model\AModel
     const COLUMN_PARAMS        = 'params';
     const COLUMN_SORT          = 'sort';
     const COLUMN_SEARCH_WIDGET = 'searchWidget';
+    const COLUMN_NO_WRAP       = 'noWrap';
 
     /**
      * Columns (local cache)
@@ -384,7 +385,7 @@ abstract class Table extends \XLite\View\ItemsList\Model\AModel
                 static::COLUMN_CODE     => 'actions left',
                 static::COLUMN_NAME     => '',
                 static::COLUMN_SERVICE  => true,
-                static::COLUMN_TEMPLATE => 'items_list/model/table/parts/empty.tpl',
+                static::COLUMN_TEMPLATE => 'items_list/model/table/parts/empty_left.tpl',
             );
         }
 
@@ -415,7 +416,7 @@ abstract class Table extends \XLite\View\ItemsList\Model\AModel
                 static::COLUMN_SERVICE  => true,
                 static::COLUMN_TEMPLATE => $this->isRemoved()
                     ? 'items_list/model/table/parts/remove_create.tpl'
-                    : 'items_list/model/table/parts/empty.tpl',
+                    : 'items_list/model/table/parts/empty_right.tpl',
             );
         }
 
@@ -506,7 +507,8 @@ abstract class Table extends \XLite\View\ItemsList\Model\AModel
         return 'cell '
             . $column[static::COLUMN_CODE]
             . ($this->hasColumnAttention($column, $entity) ? ' attention' : '')
-            . ($this->isMainColumn($column) ? ' main' : '');
+            . ($this->isMainColumn($column) ? ' main' : '')
+            . (empty($column[static::COLUMN_NO_WRAP]) ? '' : ' no-wrap');
     }
 
     /**

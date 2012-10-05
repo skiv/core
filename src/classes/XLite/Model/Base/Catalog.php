@@ -44,6 +44,15 @@ abstract class Catalog extends \XLite\Model\Base\I18n
     protected $cleanURL;
 
     /**
+     * Autogenerate Clean URL
+     *
+     * @var boolean
+     *
+     * @Column (type="boolean")
+     */
+    protected $autogenerateCleanURL = true;
+
+    /**
      * Lifecycle callback
      *
      * @return void

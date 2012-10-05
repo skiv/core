@@ -151,6 +151,7 @@ image_magick_path =
 ;
 [installer_details]
 auth_code = ""
+shared_secret_key = ""
 
 ;
 ; Some options to optimize the store
@@ -163,7 +164,7 @@ skins_cache = off
 ; Decorator options
 ;
 [decorator]
-time_limit = 240
+time_limit = 600
 use_tokenizer = Off
 disable_software_reset = Off
 use_output = Off

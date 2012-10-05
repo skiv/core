@@ -1553,7 +1553,10 @@ function doFinishInstallation(&$params, $silentMode = false)
 function x_install_get_host($host)
 {
     if (false !== strstr($host, ':')) {
-        list($result) = explode(':', $host);
+        list($result, $port) = explode(':', $host);
+        if (!$port || (80 != $port && 443 != $port)) {
+            $result = $host;
+        }
 
     } else {
         $result = $host;
@@ -1880,7 +1883,8 @@ function change_config(&$params)
             '/^socket.*=.*/',
             '/^http_host.*=.*/',
             '/^https_host.*=.*/',
-            '/^web_dir.*=.*/'
+            '/^web_dir.*=.*/',
+            '/^shared_secret_key.*=.*/'
         );
 
         $replacements = array(
@@ -1892,7 +1896,8 @@ function change_config(&$params)
             'socket   = "' . $_params['mysqlsock'] . '"',
             'http_host = "' . $_params['xlite_http_host'] . '"',
             'https_host = "' . $_params['xlite_https_host'] . '"',
-            'web_dir = "' . $_params['xlite_web_dir'] . '"'
+            'web_dir = "' . $_params['xlite_web_dir'] . '"',
+            'shared_secret_key = "' . uniqid('', true) . '"'
         );
 
         // check whether skin param is specified: not used at present

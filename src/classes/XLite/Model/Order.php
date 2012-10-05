@@ -706,6 +706,7 @@ class Order extends \XLite\Model\Base\SurchargeOwner
     {
         $hash = array(
             'items' => array(),
+            'total' => $this->getTotal(),
         );
 
         foreach ($this->getItems() as $item) {
@@ -801,8 +802,6 @@ class Order extends \XLite\Model\Base\SurchargeOwner
 
         $list = array(self::STATUS_AUTHORIZED, self::STATUS_PROCESSED, self::STATUS_COMPLETED, self::STATUS_INPROGRESS);
 
-        \XLite\Core\OrderHistory::getInstance()->registerPlaceOrder($this->getOrderId());
-
         if (!in_array($status, $list)) {
 
             \XLite\Core\Mailer::getInstance()->sendOrderCreated($this);
@@ -859,7 +858,7 @@ class Order extends \XLite\Model\Base\SurchargeOwner
             ->findAllActive();
 
         foreach ($list as $i => $method) {
-            if (!$method->getProcessor()->isApplicable($this, $method)) {
+            if (!$method->isEnabled() || !$method->getProcessor()->isApplicable($this, $method)) {
                 unset($list[$i]);
             }
         }
@@ -1226,6 +1225,14 @@ class Order extends \XLite\Model\Base\SurchargeOwner
             $transaction->setStatus($transaction::STATUS_INITIALIZED);
             $transaction->setValue($value);
             $transaction->setType($method->getProcessor()->getInitialTransactionType($method));
+
+            if ($method->getProcessor()->isTestMode($method)) {
+                $transaction->setDataCell(
+                    'test_mode',
+                    true,
+                    'Test mode'
+                );
+            }
 
             \XLite\Core\Database::getEM()->persist($transaction);
         }
