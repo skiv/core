@@ -324,6 +324,7 @@ abstract class Module extends \XLite\Controller\Admin\Module implements \XLite\B
                         $pm->setClass('Module\CDev\XPaymentsConnector\Model\Payment\Processor\XPayments');
                         $pm->setServiceName('XPayments.' . $settings['id']);
                         $pm->setName($settings['moduleName']);
+                        $pm->setType(\XLite\Model\Payment\Method::TYPE_CC_GATEWAY);
                         $this->setSettings($pm, $settings);
                         $pm->setSetting('useLiteInterface', 'N');
                     }

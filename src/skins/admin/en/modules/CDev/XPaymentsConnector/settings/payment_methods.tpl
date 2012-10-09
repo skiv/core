@@ -13,7 +13,7 @@
 
 <widget class="\XLite\Module\CDev\XPaymentsConnector\View\Form\PaymentMethods" name="methods" />
 
-  <p>{t(#The list below represented the payment methods imported from X-Payments and selected as a payment options available for customer on the checkout process.#)}</p>
+  <p>{t(#Listed below are payment methods imported from X-Payments; these payment methods are available to your customers as payment options on checkout.#)}</p>
 
   <table class="data-table">
 
@@ -45,4 +45,4 @@
 
 <widget name="methods" end />
 
-  <p>{t(#Configuring of the payment methods presented possible in the X-Payments backoffice only. In case of any problems you need to review the X-Payments Connector module settings and if it's ok, review payment configurations settings on the X-Payments side.#)}</p>
+  <p>{t(#The above payment methods can be configured in X-Payments only. In case of any problems you should review your X-Payments Connector module settings and, if they are correct, review your payment configurations settings on the X-Payments side.#)}</p>

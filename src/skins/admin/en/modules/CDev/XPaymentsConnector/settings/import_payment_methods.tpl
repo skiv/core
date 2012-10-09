@@ -59,7 +59,7 @@
 
   <div IF="hasPaymentMethodsList()">
 
-  <p IF="isPaymentMethodsImported()">{t(#Warning! Payment methods have already been imported from X-Payments early. All of them will be removed from the database if you will select to import payment methods again.#)}</p>
+  <p IF="isPaymentMethodsImported()">{t(#Warning! Payment methods have already been imported from X-Payments earlier. All payment methods previously imported from X-Payments will be removed from your store's database if you choose to import payment methods again.#)}</p>
 
   </div>
 

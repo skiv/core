@@ -13,7 +13,7 @@
 
 <widget class="\XLite\Module\CDev\XPaymentsConnector\View\Form\DeployConfiguration" name="deploy" />
 
-  <p>{t(#Copy the value of the Configuration field from X-Payments Online Store Details page, paste the string here and click Deploy. All the connection settings will be automatically specified.#)}</p>
+  <p>{t(#Copy the value of the Configuration field from X-Payments Online Store Details page, paste the string here and click Deploy. All the connection settings will be specified automatically.#)}</p>
   <table class="settings-table">
 
     <tr>
