@@ -524,6 +524,8 @@ class Marketplace extends \XLite\Base\Singleton
                     'isSystem'        => (bool) $this->getField($module, static::FIELD_IS_SYSTEM),
                 );
 
+                $result[$key] = array_merge($result[$key], $this->adjustResponseItemForGetAddonsAction($module));
+
             } else {
 
                 // :TODO: add logging here
@@ -531,6 +533,18 @@ class Marketplace extends \XLite\Base\Singleton
         }
 
         return $result;
+    }
+
+    /**
+     * Adjust result array item for get_addons action
+     *
+     * @param array $module
+     *
+     * @return array
+     */
+    protected function adjustResponseItemForGetAddonsAction($module)
+    {
+        return array();
     }
 
     // }}}
@@ -773,12 +787,17 @@ class Marketplace extends \XLite\Base\Singleton
             )
         );
 
-        $result = $this->performActionWithTTL(
-            $ttl,
-            static::ACTION_CHECK_ADDON_KEY,
-            array(static::FIELD_KEY => $keys),
-            false
-        );
+        if (!empty($keys)) {
+            $result = $this->performActionWithTTL(
+                $ttl,
+                static::ACTION_CHECK_ADDON_KEY,
+                array(static::FIELD_KEY => $keys),
+                false
+            );
+
+        } else {
+            $result = null;
+        }
 
         if (static::TTL_NOT_EXPIRED !== $result) {
             $repoModule = \XLite\Core\Database::getRepo('\XLite\Model\Module');
