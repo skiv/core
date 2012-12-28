@@ -53,7 +53,7 @@ class Data extends \XLite\Base\Singleton
     public function getProductsCount()
     {
         if (!isset($this->productsCount)) {
-            $this->productsCount = count($this->getProductIds());
+            $this->productsCount = count($this->getProducts());
         }
 
         return $this->productsCount;
@@ -92,11 +92,22 @@ class Data extends \XLite\Base\Singleton
     }
 
     /**
+     * Clear list 
+     *
+     * @return void
+     */
+    public function clearList()
+    {
+        $this->productIds = array();
+        \XLite\Core\Session::getInstance()->productComparisonIds = array();
+    }
+
+    /**
      * Get product ids 
      *
      * @return array 
      */
-    protected function getProductIds()
+    public function getProductIds()
     {
         if (!isset($this->productIds)) {
             $this->productIds = \XLite\Core\Session::getInstance()->productComparisonIds;
@@ -106,4 +117,34 @@ class Data extends \XLite\Base\Singleton
             ? $this->productIds
             : array();
     }
+
+    /**
+     * Get products 
+     *
+     * @return array 
+     */
+    public function getProducts()
+    {
+        return \XLite\Core\Database::getRepo('\XLite\Model\Product')->findByIds($this->getProductIds());
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        $count = $this->getProductsCount();
+
+        return 1 >= $count
+            ? 'Add products to compare'
+            : static::t(
+                'X products selected',
+                array(
+                    'count' => $count
+                )
+            );
+    }
+
 }

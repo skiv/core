@@ -55,12 +55,16 @@ class ProductComparison extends \XLite\View\SideBarBox
      */
     protected function getHead()
     {
-        return static::t(
-            'Compare X products',
-            array(
-                'count' => \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount()
-            )
-        );
+        $count = \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount();
+
+        return 1 >= $count
+            ? 'Add products to compare'
+            : static::t(
+                'Compare X products',
+                array(
+                    'count' => $count
+                )
+            );
     }
 
     /**
@@ -95,5 +99,25 @@ class ProductComparison extends \XLite\View\SideBarBox
     protected function getDefaultTemplate()
     {
         return $this->getDir() . '/body.tpl';
+    }
+
+    /**
+     * Is empty
+     *
+     * @return boolean
+     */
+    protected function isEmptyList()
+    {
+        return 0 == \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount();
+    }
+
+    /**
+     * Get products
+     *
+     * @return array
+     */
+    protected function getProducts()
+    {
+        return \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProducts();
     }
 }

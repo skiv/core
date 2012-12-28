@@ -51,7 +51,8 @@ class ProductComparison extends \XLite\Controller\Customer\ACustomer
             array(
                 'productId' => $id,
                 'action'    => 'delete',
-                'title'     => $this->getTitle()
+                'title'     => $this->getTitle(),
+                'count'     => \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount(),
             )
         );
     }
@@ -69,7 +70,25 @@ class ProductComparison extends \XLite\Controller\Customer\ACustomer
             array(
                 'productId' => $id,
                 'action'    => 'add',
-                'title'     => $this->getTitle()
+                'title'     => $this->getTitle(),
+                'count'     => \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount(),
+            )
+        );
+    }
+
+    /**
+     * Clear list 
+     *
+     * @return void
+     */
+    protected function doActionClear()
+    {
+        \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->clearList();
+        \XLite\Core\Event::updateProductComparison(
+            array(
+                'action'    => 'clear',
+                'title'     => $this->getTitle(),
+                'count'     => 0,
             )
         );
     }
@@ -81,12 +100,6 @@ class ProductComparison extends \XLite\Controller\Customer\ACustomer
      */
     public function getTitle()
     {
-        return static::t(
-            'X products selected',
-            array(
-                'count' => \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount()
-            )
-        );
+        return \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getTitle();
     }
-
 }

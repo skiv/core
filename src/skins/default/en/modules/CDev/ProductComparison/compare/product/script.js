@@ -13,26 +13,16 @@ core.bind(
   'load',
   function() {
     decorate(
-      'ProductsListView',
+      'ProductDetailsView',
       'postprocess',
       function(isSuccess, initial)
       {
         arguments.callee.previousMethod.apply(this, arguments);
 
         if (isSuccess) {
-          jQuery('div.product').mouseover(
+          jQuery('div.add-to-compare').mouseleave(
             function() {
-              jQuery(this).addClass('compare');
-            }
-          ).mouseout(
-            function() {
-              jQuery(this).removeClass('compare');
-            }
-          );
-    
-          jQuery('div.compare-popup').mouseleave(
-            function() {
-              jQuery(this).removeClass('visible');
+              jQuery(this).find('div.compare-popup').removeClass('visible');
             }
           );
     

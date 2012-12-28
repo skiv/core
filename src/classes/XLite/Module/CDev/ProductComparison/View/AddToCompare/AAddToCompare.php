@@ -113,11 +113,32 @@ abstract class AAddToCompare extends \XLite\View\Container
      */
     public function getTitle()
     {
-        return static::t(
-            'X products selected',
-            array(
-                'count' => \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount()
-            )
-        );
+        return \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getTitle();
     }
+
+    /**
+     * Is checked 
+     *
+     * @param integer $productId Product id
+     *
+     * @return bollean
+     */
+    public function isChecked($productId)
+    {
+        $ids = \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductIds();
+
+        return $ids 
+            && isset($ids[$productId]);
+    }
+
+    /**
+     * Is empty
+     *
+     * @return boolean
+     */
+    protected function isEmptyList()
+    {
+        return 1 >= \XLite\Module\CDev\ProductComparison\Core\Data::getInstance()->getProductsCount();
+    }
+
 }

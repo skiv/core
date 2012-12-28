@@ -12,7 +12,7 @@
   <div class="compare-popup{if:isEmptyList()} hidden{end:}">
     <div class="compare-checkbox">
       <input id="{getCheckboxId(product.product_id)}" type="checkbox" data-id="{product.product_id}"{if:isChecked(product.product_id)} checked="checked"{end:} />
-      <label for="{getCheckboxId(product.product_id)}">{t(#Compare#)}</label>
+      <label for="{getCheckboxId(product.product_id)}">{t(#Add to compare#)}</label>
     </div>
     <div class="compare-button">
       <span class="compare-products-selected">{getTitle()}</span>

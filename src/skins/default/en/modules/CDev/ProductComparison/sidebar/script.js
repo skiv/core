@@ -60,9 +60,49 @@ ProductComparisonView.prototype.postprocess = function(isSuccess)
 
     jQuery('.clear-list').click(
       function() {
-        return o.clearList();
+        core.post(
+          URLHandler.buildURL(
+            {
+              target: 'product_comparison',
+              action: 'clear'
+            }
+          ),
+          function(){},
+          {
+            target: 'product_comparison',
+            action: 'clear'
+          },
+          {
+            rpc: true
+          }
+        );
+        return false;
       }
     );
+
+    jQuery('a.remove').click(
+      function() {
+        core.post(
+          URLHandler.buildURL(
+            {
+              target: 'product_comparison',
+              action: 'delete'
+            }
+          ),
+          function(){},
+          {
+            target:     'product_comparison',
+            action:     'delete',
+            product_id: jQuery(this).data('id')
+          },
+          {
+            rpc: true
+          }
+        );
+        return false;
+      }
+    );
+
   }
 }
 

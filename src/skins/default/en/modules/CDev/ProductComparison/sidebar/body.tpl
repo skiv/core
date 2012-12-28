@@ -9,8 +9,17 @@
  * @link      http://www.litecommerce.com/
  *}
 <div class="product-comparison">
-  <div class="block block-block">
+  <div IF="!isEmptyList()" class="block block-block">
     <h2>{t(getHead())}</h2>
+    <ul>
+      {foreach:getProducts(),product}
+        <li>
+          <a href="#" class="remove" title="{t(#Remove#)}" data-id="{product.product_id}"><img src="images/spacer.gif" alt="{t(#Remove#)}" /></a>
+          <a href="{product.getURL()}">{product.getName()}</a>
+        </li>
+      {end:}
+    </ul>
+    <widget class="\XLite\Module\CDev\ProductComparison\View\Button\Compare" location="{buildURL(#compare#)}" />
     <a href="#" class="clear-list">{t(#Clear list#)}</a>
   </div>
 </div>
