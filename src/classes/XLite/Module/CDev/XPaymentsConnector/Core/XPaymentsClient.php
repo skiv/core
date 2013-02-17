@@ -625,7 +625,10 @@ class XPaymentsClient extends \XLite\Base\Singleton
                 $method = 'address' == $field ? 'street' : $field;
                 $result[$addressIndex][$field] = (
                     $profile->$addressIndex
-                    && method_exists($profile->$addressIndex, 'get' . $method)
+                    && (
+                        is_object(\XLite\Core\Database::getRepo('\XLite\Model\AddressField')->findOneBy(array('serviceName' => $method)))
+                        || method_exists($profile->$addressIndex, 'get' . $method)
+                    )
                     && $profile->$addressIndex->$method
                 )
                     ? (
